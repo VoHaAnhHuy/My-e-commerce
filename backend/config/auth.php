@@ -96,7 +96,7 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            'expire' => 6,
             'throttle' => 60,
         ],
     ],
@@ -113,5 +113,20 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Email Verification
+    |--------------------------------------------------------------------------
+    |
+    | Thời gian hết hạn của link xác thực email (đơn vị: phút).
+    | Sau khoảng thời gian này, link sẽ không còn hợp lệ
+    | và người dùng cần yêu cầu gửi lại email xác thực.
+    |
+    */
+
+    'verification' => [
+        'expire' => 60,
+    ],
 
 ];
