@@ -15,7 +15,7 @@ class StoreCouponRequest extends FormRequest
     {
         return [
             'code'             => 'required|string|max:50|unique:coupons,code',
-            'type'             => 'required|string|in:fixed,percent',
+            'type'             => 'required|string|in:fixed,percentage',
             'value'            => 'required|numeric|min:0',
             'min_order_amount' => 'nullable|numeric|min:0',
             'max_discount'     => 'nullable|numeric|min:0',
@@ -33,7 +33,7 @@ class StoreCouponRequest extends FormRequest
             'code.unique'              => 'Mã giảm giá đã tồn tại.',
             'code.max'                 => 'Mã giảm giá không được vượt quá 50 ký tự.',
             'type.required'            => 'Loại giảm giá không được để trống.',
-            'type.in'                  => 'Loại giảm giá phải là "fixed" hoặc "percent".',
+            'type.in'                  => 'Loại giảm giá phải là "fixed" hoặc "percentage".',
             'value.required'           => 'Giá trị giảm giá không được để trống.',
             'value.numeric'            => 'Giá trị giảm giá phải là số.',
             'value.min'                => 'Giá trị giảm giá không được nhỏ hơn 0.',
