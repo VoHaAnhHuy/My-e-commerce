@@ -10,6 +10,7 @@ class PaymentMethod extends Model
     protected $fillable = [
         'code',
         'name',
+        'provider',
         'is_active',
     ];
 
@@ -18,14 +19,6 @@ class PaymentMethod extends Model
         return [
             'is_active' => 'boolean',
         ];
-    }
-
-    /**
-     * Orders using this payment method.
-     */
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
     }
 
     /**

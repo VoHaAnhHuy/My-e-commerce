@@ -9,13 +9,12 @@ class Address extends Model
 {
     protected $fillable = [
         'user_id',
-        'label',
-        'recipient_name',
+        'receiver_name',
         'phone',
-        'address_line',
-        'ward',
+        'province',
         'district',
-        'city',
+        'ward',
+        'address_text',
         'is_default',
     ];
 

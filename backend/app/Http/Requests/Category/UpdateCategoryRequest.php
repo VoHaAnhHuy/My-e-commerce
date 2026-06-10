@@ -23,7 +23,8 @@ class UpdateCategoryRequest extends FormRequest
                 'max:255',
                 Rule::unique('categories', 'slug')->ignore($this->route('category')),
             ],
-            'parent_id' => 'nullable|integer|exists:categories,id',
+            'parent_id'  => 'nullable|integer|exists:categories,id',
+            'sort_order' => 'sometimes|integer|min:0',
         ];
     }
 

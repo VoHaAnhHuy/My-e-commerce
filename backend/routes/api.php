@@ -12,14 +12,20 @@ use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AttributeController;
 use App\Http\Controllers\Api\AttributeValueController;
+use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\InventoryLocationController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentMethodController;
 use App\Http\Controllers\Api\PaymentTransactionController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductImageController;
 use App\Http\Controllers\Api\ProductVariantController;
+use App\Http\Controllers\Api\RefundController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\ShipmentController;
 
 // ──────────────────────────────────────────────
 // Public Routes (không cần đăng nhập)
@@ -37,6 +43,12 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 // Products (public)
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
+
+// Product images (public)
+Route::get('/products/{product}/images', [ProductImageController::class, 'index']);
+
+// Product reviews (public)
+Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);
 
 // Categories (public)
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -78,6 +90,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Coupons — apply
     Route::post('/coupons/apply', [CouponController::class, 'apply']);
+
+    // Reviews (authenticated user)
+    Route::get('/my-reviews', [ReviewController::class, 'myReviews']);
+    Route::post('/reviews', [ReviewController::class, 'store']);
 });
 
 // ──────────────────────────────────────────────
@@ -95,6 +111,12 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::post('/variants', [ProductVariantController::class, 'store']);
     Route::put('/variants/{variant}', [ProductVariantController::class, 'update']);
     Route::delete('/variants/{variant}', [ProductVariantController::class, 'destroy']);
+
+    // Product Images
+    Route::post('/product-images', [ProductImageController::class, 'store']);
+    Route::get('/product-images/{productImage}', [ProductImageController::class, 'show']);
+    Route::put('/product-images/{productImage}', [ProductImageController::class, 'update']);
+    Route::delete('/product-images/{productImage}', [ProductImageController::class, 'destroy']);
 
     // Categories
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -124,4 +146,25 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Orders (admin)
     Route::get('/orders', [OrderController::class, 'adminIndex']);
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']);
+
+    // Reviews (admin: update status, delete)
+    Route::get('/reviews/{review}', [ReviewController::class, 'show']);
+    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
+
+    // Shipments
+    Route::apiResource('shipments', ShipmentController::class);
+    Route::get('/orders/{order}/shipments', [ShipmentController::class, 'byOrder']);
+
+    // Refunds
+    Route::apiResource('refunds', RefundController::class);
+    Route::get('/orders/{order}/refunds', [RefundController::class, 'byOrder']);
+
+    // Inventory Locations
+    Route::apiResource('inventory-locations', InventoryLocationController::class);
+
+    // Audit Logs (read-only)
+    Route::get('/audit-logs', [AuditLogController::class, 'index']);
+    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
+    Route::get('/audit-logs/{entityType}/{entityId}', [AuditLogController::class, 'byEntity']);
 });

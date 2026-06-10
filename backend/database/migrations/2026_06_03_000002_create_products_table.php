@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('slug')->unique();
-            $table->text('description')->nullable();
+            $table->string('name');
             $table->decimal('base_price', 12, 2);
-            $table->boolean('is_active')->default(true);
+            $table->text('description')->nullable();
+            $table->enum('status', ['active', 'inactive', 'draft'])->default('active');
             $table->timestamps();
             $table->softDeletes();
         });

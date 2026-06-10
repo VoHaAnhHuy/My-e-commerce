@@ -13,7 +13,15 @@ class Category extends Model
         'name',
         'slug',
         'parent_id',
+        'sort_order',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'sort_order' => 'integer',
+        ];
+    }
 
     /**
      * Parent category.
@@ -36,6 +44,6 @@ class Category extends Model
      */
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'product_categories');
     }
 }

@@ -17,7 +17,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getActive(): Collection
     {
         return $this->model
-            ->where('is_active', true)
+            ->where('status', 'active')
             ->with('categories', 'variants')
             ->get();
     }
@@ -26,7 +26,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     {
         return $this->model
             ->where('slug', $slug)
-            ->with('categories', 'variants.attributeValues.attribute')
+            ->with('categories', 'variants.attributeValues.attribute', 'images')
             ->first();
     }
 }

@@ -16,6 +16,7 @@ class StorePaymentMethodRequest extends FormRequest
         return [
             'code'      => 'required|string|max:50|unique:payment_methods,code',
             'name'      => 'required|string|max:100',
+            'provider'  => 'nullable|string|max:100',
             'is_active' => 'sometimes|boolean',
         ];
     }

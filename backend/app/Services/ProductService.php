@@ -20,7 +20,7 @@ class ProductService
 
     public function getById(int $id): ?Model
     {
-        return $this->productRepo->getById($id)?->load('categories', 'variants.attributeValues.attribute');
+        return $this->productRepo->getById($id)?->load('categories', 'variants.attributeValues.attribute', 'images');
     }
 
     public function findBySlug(string $slug): ?Model
@@ -39,7 +39,7 @@ class ProductService
                 'slug'        => $data['slug'],
                 'description' => $data['description'] ?? null,
                 'base_price'  => $data['base_price'],
-                'is_active'   => $data['is_active'] ?? true,
+                'status'      => $data['status'] ?? 'active',
             ]);
 
             // Sync categories
@@ -51,10 +51,12 @@ class ProductService
             if (!empty($data['variants'])) {
                 foreach ($data['variants'] as $variantData) {
                     $variant = $product->variants()->create([
-                        'sku'       => $variantData['sku'],
-                        'price'     => $variantData['price'],
-                        'stock'     => $variantData['stock'],
-                        'is_active' => $variantData['is_active'] ?? true,
+                        'sku'              => $variantData['sku'],
+                        'barcode'          => $variantData['barcode'] ?? null,
+                        'price'            => $variantData['price'],
+                        'compare_at_price' => $variantData['compare_at_price'] ?? null,
+                        'track_inventory'  => $variantData['track_inventory'] ?? true,
+                        'status'           => $variantData['status'] ?? 'active',
                     ]);
 
                     if (!empty($variantData['attribute_value_ids'])) {
@@ -74,7 +76,7 @@ class ProductService
     {
         return DB::transaction(function () use ($id, $data) {
             $product = $this->productRepo->update($id, collect($data)->only([
-                'name', 'slug', 'description', 'base_price', 'is_active',
+                'name', 'slug', 'description', 'base_price', 'status',
             ])->toArray());
 
             if (!$product) {

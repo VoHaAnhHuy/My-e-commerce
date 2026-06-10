@@ -16,14 +16,13 @@ class Product extends Model
         'slug',
         'description',
         'base_price',
-        'is_active',
+        'status',
     ];
 
     protected function casts(): array
     {
         return [
             'base_price' => 'decimal:2',
-            'is_active' => 'boolean',
         ];
     }
 
@@ -32,7 +31,7 @@ class Product extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'product_categories');
     }
 
     /**
@@ -41,5 +40,21 @@ class Product extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * Images of this product.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    /**
+     * Reviews for this product.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }

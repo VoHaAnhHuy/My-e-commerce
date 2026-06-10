@@ -30,7 +30,7 @@ class OrderService
 
     public function getById(int $id): ?Model
     {
-        return $this->orderRepo->getById($id)?->load('items', 'paymentMethod', 'coupon', 'transactions');
+        return $this->orderRepo->getById($id)?->load('items', 'coupon', 'transactions.paymentMethod');
     }
 
     /**
@@ -48,17 +48,22 @@ class OrderService
 
             // Chuẩn bị order items + tính subtotal
             foreach ($data['items'] as $item) {
-                $variant = $this->variantRepo->getById($item['product_variant_id']);
-                $lineTotal = $variant->price * $item['quantity'];
+                $variant = $this->variantRepo->getById($item['variant_id']);
+                $lineTotal = $variant->price * $item['qty'];
                 $subtotal += $lineTotal;
 
                 $orderItems[] = [
-                    'product_variant_id' => $variant->id,
-                    'product_name'       => $variant->product->name,
-                    'variant_info'       => $variant->attributeValues->pluck('value')->implode(' / ') ?: null,
-                    'sku'                => $variant->sku,
-                    'price'              => $variant->price,
-                    'quantity'           => $item['quantity'],
+                    'product_id'           => $variant->product_id,
+                    'variant_id'           => $variant->id,
+                    'product_name_snapshot' => $variant->product->name,
+                    'variant_sku_snapshot'  => $variant->sku,
+                    'attributes_snapshot'   => $variant->attributeValues->map(fn ($av) => [
+                        'attribute' => $av->attribute->name,
+                        'value'     => $av->value,
+                    ])->toArray() ?: null,
+                    'unit_price'           => $variant->price,
+                    'qty'                  => $item['qty'],
+                    'line_total'           => $lineTotal,
                 ];
             }
 
@@ -76,31 +81,25 @@ class OrderService
                 }
             }
 
-            $totalAmount = $subtotal - $discountAmount + ($data['shipping_fee'] ?? 0);
+            $total = $subtotal - $discountAmount + ($data['shipping_fee'] ?? 0);
 
             // Tạo order
             $order = $this->orderRepo->create([
-                'user_id'            => $userId,
-                'coupon_id'          => $couponId,
-                'payment_method_id'  => $data['payment_method_id'],
-                'shipping_name'      => $data['shipping_name'],
-                'shipping_phone'     => $data['shipping_phone'],
-                'shipping_address'   => $data['shipping_address'],
-                'shipping_ward'      => $data['shipping_ward'] ?? null,
-                'shipping_district'  => $data['shipping_district'],
-                'shipping_city'      => $data['shipping_city'],
-                'subtotal'           => $subtotal,
-                'discount_amount'    => $discountAmount,
-                'shipping_fee'       => $data['shipping_fee'] ?? 0,
-                'total_amount'       => max($totalAmount, 0),
-                'note'               => $data['note'] ?? null,
-                'status'             => 'pending',
+                'user_id'                   => $userId,
+                'coupon_id'                 => $couponId,
+                'subtotal'                  => $subtotal,
+                'discount'                  => $discountAmount,
+                'shipping'                  => $data['shipping_fee'] ?? 0,
+                'total'                     => max($total, 0),
+                'status'                    => 'pending',
+                'payment_status'            => 'unpaid',
+                'shipping_address_snapshot' => $data['shipping_address'],
             ]);
 
             // Tạo order items
             $order->items()->createMany($orderItems);
 
-            return $order->load('items', 'paymentMethod', 'coupon');
+            return $order->load('items', 'coupon');
         });
     }
 

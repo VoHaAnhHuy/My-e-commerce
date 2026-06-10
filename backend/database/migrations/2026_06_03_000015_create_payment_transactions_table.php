@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('payment_method_id')->constrained()->restrictOnDelete();
-            $table->string('transaction_id')->nullable(); // from payment gateway
             $table->decimal('amount', 12, 2);
             $table->enum('status', ['pending', 'success', 'failed', 'refunded'])->default('pending');
-            $table->timestamp('paid_at')->nullable();
+            $table->string('provider_transaction_id')->nullable();
+            $table->string('idempotency_key')->nullable()->unique();
+            $table->json('raw_request')->nullable();
+            $table->json('raw_response')->nullable();
             $table->timestamps();
         });
     }

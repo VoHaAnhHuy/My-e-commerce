@@ -11,9 +11,10 @@ class Coupon extends Model
         'code',
         'type',
         'value',
-        'min_order_amount',
         'max_discount',
         'usage_limit',
+        'usage_per_user',
+        'min_order_amount',
         'used_count',
         'starts_at',
         'expires_at',
@@ -64,5 +65,13 @@ class Coupon extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Coupon usage records.
+     */
+    public function usages(): HasMany
+    {
+        return $this->hasMany(CouponUsage::class);
     }
 }

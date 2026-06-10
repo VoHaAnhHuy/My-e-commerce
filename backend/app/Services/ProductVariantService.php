@@ -27,11 +27,13 @@ class ProductVariantService
     {
         return DB::transaction(function () use ($data) {
             $variant = $this->variantRepo->create([
-                'product_id' => $data['product_id'],
-                'sku'        => $data['sku'],
-                'price'      => $data['price'],
-                'stock'      => $data['stock'],
-                'is_active'  => $data['is_active'] ?? true,
+                'product_id'       => $data['product_id'],
+                'sku'              => $data['sku'],
+                'barcode'          => $data['barcode'] ?? null,
+                'price'            => $data['price'],
+                'compare_at_price' => $data['compare_at_price'] ?? null,
+                'track_inventory'  => $data['track_inventory'] ?? true,
+                'status'           => $data['status'] ?? 'active',
             ]);
 
             if (!empty($data['attribute_value_ids'])) {
@@ -46,7 +48,7 @@ class ProductVariantService
     {
         return DB::transaction(function () use ($id, $data) {
             $variant = $this->variantRepo->update($id, collect($data)->only([
-                'sku', 'price', 'stock', 'is_active',
+                'sku', 'barcode', 'price', 'compare_at_price', 'track_inventory', 'status',
             ])->toArray());
 
             if (!$variant) {

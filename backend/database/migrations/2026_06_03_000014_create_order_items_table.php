@@ -14,14 +14,16 @@ return new class extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_variant_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('variant_id')->nullable()->constrained('product_variants')->nullOnDelete();
 
             // Snapshot fields — preserved even if product/variant is deleted
-            $table->string('product_name');
-            $table->string('variant_info')->nullable(); // e.g. "Đỏ / XL"
-            $table->string('sku');
-            $table->decimal('price', 12, 2);
-            $table->integer('quantity');
+            $table->string('product_name_snapshot');
+            $table->string('variant_sku_snapshot');
+            $table->json('attributes_snapshot')->nullable();
+            $table->decimal('unit_price', 12, 2);
+            $table->integer('qty');
+            $table->decimal('line_total', 12, 2);
 
             $table->timestamps();
         });

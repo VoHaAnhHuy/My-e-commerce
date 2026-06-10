@@ -14,12 +14,14 @@ class StorePaymentTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id'          => 'required|integer|exists:orders,id',
-            'payment_method_id' => 'required|integer|exists:payment_methods,id',
-            'transaction_id'    => 'nullable|string|max:255',
-            'amount'            => 'required|numeric|min:0',
-            'status'            => 'required|string|in:pending,success,failed,refunded',
-            'paid_at'           => 'nullable|date',
+            'order_id'                => 'required|integer|exists:orders,id',
+            'payment_method_id'       => 'required|integer|exists:payment_methods,id',
+            'amount'                  => 'required|numeric|min:0',
+            'status'                  => 'required|string|in:pending,success,failed,refunded',
+            'provider_transaction_id' => 'nullable|string|max:255',
+            'idempotency_key'         => 'nullable|string|max:255|unique:payment_transactions,idempotency_key',
+            'raw_request'             => 'nullable|array',
+            'raw_response'            => 'nullable|array',
         ];
     }
 
@@ -34,7 +36,7 @@ class StorePaymentTransactionRequest extends FormRequest
             'amount.min'                 => 'Số tiền không được nhỏ hơn 0.',
             'status.required'            => 'Trạng thái không được để trống.',
             'status.in'                  => 'Trạng thái không hợp lệ.',
-            'paid_at.date'               => 'Ngày thanh toán không hợp lệ.',
+            'idempotency_key.unique'     => 'Idempotency key đã tồn tại.',
         ];
     }
 }
