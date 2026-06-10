@@ -14,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -56,5 +56,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function cart(): HasOne
     {
         return $this->hasOne(Cart::class);
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }
