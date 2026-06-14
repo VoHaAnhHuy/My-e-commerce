@@ -61,6 +61,18 @@ Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 Route::get('/products/{product}/variants', [ProductVariantController::class, 'index']);
 
 // ──────────────────────────────────────────────
+// Cart Routes (Guest + Authenticated)
+// ──────────────────────────────────────────────
+
+Route::middleware('optionalAuth')->prefix('cart')->group(function () {
+    Route::get('/', [CartController::class, 'index']);
+    Route::post('/items', [CartController::class, 'addItem']);
+    Route::put('/items/{cartItem}', [CartController::class, 'updateItem']);
+    Route::delete('/items/{cartItem}', [CartController::class, 'removeItem']);
+    Route::delete('/', [CartController::class, 'clear']);
+});
+
+// ──────────────────────────────────────────────
 // Authenticated Routes (cần đăng nhập)
 // ──────────────────────────────────────────────
 
@@ -75,12 +87,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('addresses', AddressController::class)->except(['show']);
     Route::patch('/addresses/{address}/default', [AddressController::class, 'setDefault']);
 
-    // Cart
-    Route::get('/cart', [CartController::class, 'index']);
-    Route::post('/cart/items', [CartController::class, 'addItem']);
-    Route::put('/cart/items/{cartItem}', [CartController::class, 'updateItem']);
-    Route::delete('/cart/items/{cartItem}', [CartController::class, 'removeItem']);
-    Route::delete('/cart', [CartController::class, 'clear']);
+    // Cart — merge (cần đăng nhập)
+    Route::post('/cart/merge', [CartController::class, 'merge']);
 
     // Orders (customer)
     Route::get('/orders', [OrderController::class, 'index']);

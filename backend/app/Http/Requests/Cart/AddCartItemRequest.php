@@ -15,7 +15,7 @@ class AddCartItemRequest extends FormRequest
     {
         return [
             'product_variant_id' => 'required|integer|exists:product_variants,id',
-            'quantity'           => 'required|integer|min:1',
+            'quantity'           => 'required|integer|min:1|max:999',
         ];
     }
 
@@ -27,6 +27,7 @@ class AddCartItemRequest extends FormRequest
             'quantity.required'           => 'Số lượng không được để trống.',
             'quantity.integer'            => 'Số lượng phải là số nguyên.',
             'quantity.min'                => 'Số lượng phải ít nhất là 1.',
+            'quantity.max'                => 'Số lượng không được vượt quá 999.',
         ];
     }
 }
