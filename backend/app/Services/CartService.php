@@ -173,4 +173,20 @@ class CartService
     {
         return $this->cartRepo->mergeGuestCart($cartToken, $userId);
     }
+
+    /**
+     * FR-CART-005: Tính tạm tính theo giá biến thể hiện hành.
+     *
+     * Tạm tính = Σ(giá biến thể × số lượng), làm tròn VND (không phần lẻ).
+     */
+    public function calculateSubtotal(?int $userId, ?string $cartToken): int
+    {
+        $cart = $this->getCart($userId, $cartToken);
+
+        $subtotal = $cart->items->sum(function (CartItem $item) {
+            return $item->productVariant->price * $item->quantity;
+        });
+
+        return (int) round($subtotal);
+    }
 }
