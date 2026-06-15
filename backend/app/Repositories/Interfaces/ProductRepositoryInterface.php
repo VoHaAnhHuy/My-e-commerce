@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 interface ProductRepositoryInterface extends BaseRepositoryInterface
 {
     /**
-     * Lấy sản phẩm đang active.
+     * Lấy sản phẩm đang active (hiển thị cho khách).
      */
     public function getActive(): Collection;
 
@@ -16,4 +16,14 @@ interface ProductRepositoryInterface extends BaseRepositoryInterface
      * Tìm sản phẩm theo slug.
      */
     public function findBySlug(string $slug): ?Model;
+
+    /**
+     * FR-CAT-002: Lấy tất cả sản phẩm cho admin.
+     */
+    public function getAllForAdmin(): Collection;
+
+    /**
+     * FR-CAT-002: Lấy sản phẩm có thể tìm kiếm (loại trừ archived).
+     */
+    public function getSearchable(): Collection;
 }

@@ -13,9 +13,20 @@ class ProductService
         protected ProductRepositoryInterface $productRepo,
     ) {}
 
+    /**
+     * FR-CAT-002: Lấy sản phẩm cho khách — chỉ active.
+     */
     public function getAll(): Collection
     {
         return $this->productRepo->getActive();
+    }
+
+    /**
+     * FR-CAT-002: Lấy tất cả sản phẩm cho admin (mọi trạng thái).
+     */
+    public function getAllForAdmin(): Collection
+    {
+        return $this->productRepo->getAllForAdmin();
     }
 
     public function getById(int $id): ?Model
@@ -94,5 +105,14 @@ class ProductService
     public function delete(int $id): bool
     {
         return $this->productRepo->delete($id);
+    }
+
+    /**
+     * FR-CAT-002: Chuyển sản phẩm sang trạng thái archived.
+     * Ẩn khỏi tìm kiếm nhưng giữ lịch sử (không soft delete).
+     */
+    public function archive(int $id): ?Model
+    {
+        return $this->productRepo->update($id, ['status' => 'archived']);
     }
 }

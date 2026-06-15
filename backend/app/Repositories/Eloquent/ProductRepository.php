@@ -17,7 +17,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getActive(): Collection
     {
         return $this->model
-            ->where('status', 'active')
+            ->active()
             ->with('categories', 'variants')
             ->get();
     }
@@ -28,5 +28,26 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->where('slug', $slug)
             ->with('categories', 'variants.attributeValues.attribute', 'images')
             ->first();
+    }
+
+    /**
+     * FR-CAT-002: Lấy tất cả sản phẩm cho admin (bao gồm mọi trạng thái).
+     */
+    public function getAllForAdmin(): Collection
+    {
+        return $this->model
+            ->with('categories', 'variants')
+            ->get();
+    }
+
+    /**
+     * FR-CAT-002: Lấy sản phẩm có thể tìm kiếm (loại trừ archived).
+     */
+    public function getSearchable(): Collection
+    {
+        return $this->model
+            ->searchable()
+            ->with('categories', 'variants')
+            ->get();
     }
 }

@@ -22,7 +22,7 @@ class UpdateProductRequest extends FormRequest
             ],
             'description' => 'nullable|string',
             'base_price'  => 'sometimes|required|numeric|min:0',
-            'status'      => 'sometimes|string|in:active,inactive,draft',
+            'status'      => 'sometimes|string|in:active,inactive,draft,archived',
             'category_ids'   => 'nullable|array',
             'category_ids.*' => 'integer|exists:categories,id',
         ];
@@ -36,7 +36,7 @@ class UpdateProductRequest extends FormRequest
             'slug.unique'         => 'Slug đã tồn tại.',
             'base_price.required' => 'Giá cơ bản không được để trống.',
             'base_price.min'      => 'Giá cơ bản không được nhỏ hơn 0.',
-            'status.in'           => 'Trạng thái phải là active, inactive hoặc draft.',
+            'status.in'           => 'Trạng thái phải là active, inactive, draft hoặc archived.',
         ];
     }
 }
