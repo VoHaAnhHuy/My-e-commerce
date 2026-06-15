@@ -5,39 +5,48 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
+        'order_number',
         'user_id',
+        'cart_id',
         'coupon_id',
-        'payment_method_id',
-        'shipping_name',
-        'shipping_phone',
-        'shipping_address',
-        'shipping_ward',
-        'shipping_district',
-        'shipping_city',
         'subtotal',
-        'discount_amount',
-        'shipping_fee',
-        'total_amount',
+        'discount',
+        'shipping',
+        'total',
         'status',
-        'note',
+        'payment_status',
+        'shipping_address_snapshot',
     ];
 
     protected function casts(): array
     {
         return [
             'subtotal' => 'decimal:2',
-            'discount_amount' => 'decimal:2',
-            'shipping_fee' => 'decimal:2',
-            'total_amount' => 'decimal:2',
+            'discount' => 'decimal:2',
+            'shipping' => 'decimal:2',
+            'total' => 'decimal:2',
+            'shipping_address_snapshot' => 'array',
         ];
+    }
+
+    /**
+     * Boot the model — auto-generate order_number.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Order $order) {
+            if (empty($order->order_number)) {
+                $order->order_number = 'ORD-' . strtoupper(Str::random(8));
+            }
+        });
     }
 
     /**
@@ -49,19 +58,19 @@ class Order extends Model
     }
 
     /**
+     * The cart this order was created from.
+     */
+    public function cart(): BelongsTo
+    {
+        return $this->belongsTo(Cart::class);
+    }
+
+    /**
      * The coupon applied to this order.
      */
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
-    }
-
-    /**
-     * The payment method for this order.
-     */
-    public function paymentMethod(): BelongsTo
-    {
-        return $this->belongsTo(PaymentMethod::class);
     }
 
     /**
@@ -81,10 +90,26 @@ class Order extends Model
     }
 
     /**
-     * Latest payment transaction.
+     * Status change history.
      */
-    public function latestTransaction(): HasOne
+    public function statusHistories(): HasMany
     {
-        return $this->hasOne(PaymentTransaction::class)->latestOfMany();
+        return $this->hasMany(OrderStatusHistory::class);
+    }
+
+    /**
+     * Shipments for this order.
+     */
+    public function shipments(): HasMany
+    {
+        return $this->hasMany(Shipment::class);
+    }
+
+    /**
+     * Refunds for this order.
+     */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(Refund::class);
     }
 }

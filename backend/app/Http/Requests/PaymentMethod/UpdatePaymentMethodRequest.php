@@ -20,6 +20,7 @@ class UpdatePaymentMethodRequest extends FormRequest
                 Rule::unique('payment_methods', 'code')->ignore($this->route('payment_method')),
             ],
             'name'      => 'sometimes|required|string|max:100',
+            'provider'  => 'nullable|string|max:100',
             'is_active' => 'sometimes|boolean',
         ];
     }

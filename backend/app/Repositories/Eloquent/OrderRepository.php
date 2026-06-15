@@ -17,7 +17,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
     {
         return $this->model
             ->where('user_id', $userId)
-            ->with('items', 'paymentMethod')
+            ->with('items')
             ->orderByDesc('created_at')
             ->get();
     }

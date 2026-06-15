@@ -14,7 +14,8 @@ class StoreAttributeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100|unique:attributes,name',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:100|unique:attributes,code',
         ];
     }
 
@@ -22,8 +23,8 @@ class StoreAttributeRequest extends FormRequest
     {
         return [
             'name.required' => 'Tên thuộc tính không được để trống.',
-            'name.max'      => 'Tên thuộc tính không được vượt quá 100 ký tự.',
-            'name.unique'   => 'Tên thuộc tính đã tồn tại.',
+            'code.required' => 'Mã thuộc tính không được để trống.',
+            'code.unique'   => 'Mã thuộc tính đã tồn tại.',
         ];
     }
 }

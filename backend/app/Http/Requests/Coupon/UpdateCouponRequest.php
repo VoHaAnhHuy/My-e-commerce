@@ -27,6 +27,7 @@ class UpdateCouponRequest extends FormRequest
             'min_order_amount' => 'nullable|numeric|min:0',
             'max_discount'     => 'nullable|numeric|min:0',
             'usage_limit'      => 'nullable|integer|min:1',
+            'usage_per_user'   => 'nullable|integer|min:1',
             'starts_at'        => 'nullable|date',
             'expires_at'       => 'nullable|date|after_or_equal:starts_at',
             'is_active'        => 'sometimes|boolean',

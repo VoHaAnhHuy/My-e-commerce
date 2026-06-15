@@ -13,23 +13,16 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_number')->unique();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
+            $table->foreignId('cart_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('payment_method_id')->constrained()->restrictOnDelete();
-
-            // Shipping info snapshot
-            $table->string('shipping_name');
-            $table->string('shipping_phone');
-            $table->string('shipping_address');
-            $table->string('shipping_ward')->nullable();
-            $table->string('shipping_district');
-            $table->string('shipping_city');
 
             // Amounts
             $table->decimal('subtotal', 12, 2);
-            $table->decimal('discount_amount', 12, 2)->default(0);
-            $table->decimal('shipping_fee', 12, 2)->default(0);
-            $table->decimal('total_amount', 12, 2);
+            $table->decimal('discount', 12, 2)->default(0);
+            $table->decimal('shipping', 12, 2)->default(0);
+            $table->decimal('total', 12, 2);
 
             $table->enum('status', [
                 'pending',
@@ -40,7 +33,11 @@ return new class extends Migration
                 'cancelled',
             ])->default('pending');
 
-            $table->text('note')->nullable();
+            $table->enum('payment_status', ['unpaid', 'paid', 'refunded'])->default('unpaid');
+
+            // Shipping address snapshot (JSON)
+            $table->json('shipping_address_snapshot');
+
             $table->timestamps();
             $table->softDeletes();
         });

@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->enum('type', ['percentage', 'fixed']);
             $table->decimal('value', 12, 2);
-            $table->decimal('min_order_amount', 12, 2)->default(0);
-            $table->decimal('max_discount', 12, 2)->nullable(); // only for percentage type
+            $table->decimal('max_discount', 12, 2)->nullable();
             $table->integer('usage_limit')->nullable();
+            $table->integer('usage_per_user')->nullable();
+            $table->decimal('min_order_amount', 12, 2)->default(0);
             $table->integer('used_count')->default(0);
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('expires_at')->nullable();

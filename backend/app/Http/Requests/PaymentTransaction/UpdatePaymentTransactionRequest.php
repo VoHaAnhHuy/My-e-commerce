@@ -14,9 +14,10 @@ class UpdatePaymentTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'transaction_id' => 'nullable|string|max:255',
-            'status'         => 'sometimes|required|string|in:pending,success,failed,refunded',
-            'paid_at'        => 'nullable|date',
+            'provider_transaction_id' => 'nullable|string|max:255',
+            'status'                  => 'sometimes|required|string|in:pending,success,failed,refunded',
+            'raw_request'             => 'nullable|array',
+            'raw_response'            => 'nullable|array',
         ];
     }
 
@@ -25,7 +26,6 @@ class UpdatePaymentTransactionRequest extends FormRequest
         return [
             'status.required' => 'Trạng thái không được để trống.',
             'status.in'       => 'Trạng thái không hợp lệ.',
-            'paid_at.date'    => 'Ngày thanh toán không hợp lệ.',
         ];
     }
 }

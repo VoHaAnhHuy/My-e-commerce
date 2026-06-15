@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('sku')->unique();
+            $table->string('barcode')->nullable()->unique();
             $table->decimal('price', 12, 2);
-            $table->integer('stock')->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->decimal('compare_at_price', 12, 2)->nullable();
+            $table->boolean('track_inventory')->default(true);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
         });

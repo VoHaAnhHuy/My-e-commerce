@@ -18,14 +18,16 @@ class StoreProductRequest extends FormRequest
             'slug'        => 'required|string|max:255|unique:products,slug',
             'description' => 'nullable|string',
             'base_price'  => 'required|numeric|min:0',
-            'is_active'   => 'sometimes|boolean',
+            'status'      => 'sometimes|string|in:active,inactive,draft',
             'category_ids'   => 'nullable|array',
             'category_ids.*' => 'integer|exists:categories,id',
             'variants'                          => 'nullable|array|min:1',
             'variants.*.sku'                    => 'required|string|max:100|distinct',
+            'variants.*.barcode'                => 'nullable|string|max:100|distinct',
             'variants.*.price'                  => 'required|numeric|min:0',
-            'variants.*.stock'                  => 'required|integer|min:0',
-            'variants.*.is_active'              => 'sometimes|boolean',
+            'variants.*.compare_at_price'       => 'nullable|numeric|min:0',
+            'variants.*.track_inventory'        => 'sometimes|boolean',
+            'variants.*.status'                 => 'sometimes|string|in:active,inactive',
             'variants.*.attribute_value_ids'    => 'nullable|array',
             'variants.*.attribute_value_ids.*'  => 'integer|exists:attribute_values,id',
         ];
@@ -39,6 +41,7 @@ class StoreProductRequest extends FormRequest
             'slug.unique'         => 'Slug đã tồn tại.',
             'base_price.required' => 'Giá cơ bản không được để trống.',
             'base_price.min'      => 'Giá cơ bản không được nhỏ hơn 0.',
+            'status.in'           => 'Trạng thái phải là active, inactive hoặc draft.',
         ];
     }
 }

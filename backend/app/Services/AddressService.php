@@ -10,7 +10,8 @@ class AddressService
 {
     public function __construct(
         protected AddressRepositoryInterface $addressRepo,
-    ) {}
+    ) {
+    }
 
     public function getByUser(int $userId): Collection
     {
@@ -34,7 +35,14 @@ class AddressService
 
     public function update(int $id, array $data): ?Model
     {
-        return $this->addressRepo->update($id, $data);
+        $address = $this->addressRepo->update($id, $data);
+
+        if ($address && !empty($data['is_default'])) {
+            $this->addressRepo->setDefault($address->id, $address->user_id);
+            $address->refresh();
+        }
+
+        return $address;
     }
 
     public function delete(int $id): bool

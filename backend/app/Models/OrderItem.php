@@ -9,18 +9,22 @@ class OrderItem extends Model
 {
     protected $fillable = [
         'order_id',
-        'product_variant_id',
-        'product_name',
-        'variant_info',
-        'sku',
-        'price',
-        'quantity',
+        'product_id',
+        'variant_id',
+        'product_name_snapshot',
+        'variant_sku_snapshot',
+        'attributes_snapshot',
+        'unit_price',
+        'qty',
+        'line_total',
     ];
 
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
+            'unit_price' => 'decimal:2',
+            'line_total' => 'decimal:2',
+            'attributes_snapshot' => 'array',
         ];
     }
 
@@ -33,18 +37,18 @@ class OrderItem extends Model
     }
 
     /**
-     * The product variant (may be null if variant was deleted).
+     * The product (may be null if deleted).
      */
-    public function productVariant(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(ProductVariant::class);
+        return $this->belongsTo(Product::class);
     }
 
     /**
-     * Get the line total (price × quantity).
+     * The product variant (may be null if deleted).
      */
-    public function getLineTotalAttribute(): string
+    public function variant(): BelongsTo
     {
-        return number_format($this->price * $this->quantity, 2, '.', '');
+        return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
 }
