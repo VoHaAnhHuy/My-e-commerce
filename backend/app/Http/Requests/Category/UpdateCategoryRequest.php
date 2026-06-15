@@ -25,6 +25,7 @@ class UpdateCategoryRequest extends FormRequest
             ],
             'parent_id'  => 'nullable|integer|exists:categories,id',
             'sort_order' => 'sometimes|integer|min:0',
+            'is_active'  => 'sometimes|boolean',
         ];
     }
 
