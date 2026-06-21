@@ -16,16 +16,26 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
 
     public function getRootCategories(): Collection
     {
-        return $this->model->whereNull('parent_id')->with('children')->get();
+        return $this->model
+            ->whereNull('parent_id')
+            ->with('children')
+            ->orderBy('sort_order')
+            ->get();
     }
 
     public function getWithChildren(): Collection
     {
-        return $this->model->with('children')->get();
+        return $this->model
+            ->with('children')
+            ->orderBy('sort_order')
+            ->get();
     }
 
     public function findBySlug(string $slug): ?Model
     {
-        return $this->model->where('slug', $slug)->with('children', 'products')->first();
+        return $this->model
+            ->where('slug', $slug)
+            ->with('children', 'products')
+            ->first();
     }
 }

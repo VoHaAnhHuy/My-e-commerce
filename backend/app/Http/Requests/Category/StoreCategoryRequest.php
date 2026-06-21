@@ -18,6 +18,7 @@ class StoreCategoryRequest extends FormRequest
             'slug'       => 'required|string|max:255|unique:categories,slug',
             'parent_id'  => 'nullable|integer|exists:categories,id',
             'sort_order' => 'sometimes|integer|min:0',
+            'is_active'  => 'sometimes|boolean',
         ];
     }
 
